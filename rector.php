@@ -11,9 +11,6 @@ return RectorConfig::configure()
         __DIR__ . '/public',
         __DIR__ . '/src',
     ])
-    ->withRules([
-
-    ])
     ->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml')
     ->withSets([
         SymfonySetList::SYMFONY_62,

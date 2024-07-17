@@ -1,0 +1,6 @@
+#!/bin/sh
+# Запуск Rector
+vendor/bin/rector process
+
+# Линтинг YAML файлов
+php bin/console lint:yaml config
