@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
 use App\Repository\InfoRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation\Slug;
@@ -27,7 +30,7 @@ class Page
 
     #[ORM\Column(type: "datetime", nullable: true)]
     #[Timestampable]
-    private ?\DateTime $date = null;
+    private ?DateTime $dateTime = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
@@ -86,14 +89,14 @@ class Page
         return $this;
     }
 
-    public function getDate(): ?\DateTime
+    public function getDate(): ?DateTime
     {
-        return $this->date;
+        return $this->dateTime;
     }
 
-    public function setDate(?\DateTime $date): self
+    public function setDate(?DateTime $date): self
     {
-        $this->date = $date;
+        $this->dateTime = $date;
         return $this;
     }
 

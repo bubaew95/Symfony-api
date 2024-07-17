@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
+use DateTimeInterface;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -20,10 +24,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 ]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    const STATUS_PASSWORD_UPDATE = 'password_update';
-    const STATUS_ACTIVED = 'actived';
-    const STATUS_DEACTIVATED = 'deactivated';
-    const STATUS_BAN = 'ban';
+    public const STATUS_PASSWORD_UPDATE = 'password_update';
+
+    public const STATUS_ACTIVED = 'actived';
+
+    public const STATUS_DEACTIVATED = 'deactivated';
+
+    public const STATUS_BAN = 'ban';
 
     public const STATUSES = [
         self::STATUS_PASSWORD_UPDATE => [
@@ -100,7 +107,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $status = null;
 
     #[ORM\Column(type: "datetime")]
-    private \DateTime $date;
+    private DateTime $dateTime;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $hash = null;
@@ -197,7 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
@@ -301,14 +308,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getFullName(): ?string
     {
-        return "{$this->getFirstName()} {$this->getMiddleName()} {$this->getLastName()}";
+        return sprintf('%s %s %s', $this->getFirstName(), $this->getMiddleName(), $this->getLastName());
     }
 
     public function getUserNameFromReview() : ? string
     {
-        $middleName = mb_substr($this->getMiddleName(), 0, 1);
+        $middleName = mb_substr((string) $this->getMiddleName(), 0, 1);
 
-        return "{$this->getFirstName()} {$middleName}.";
+        return sprintf('%s %s.', $this->getFirstName(), $middleName);
     }
 
     public function getStatus(): ?string
@@ -323,14 +330,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
-        return $this->date;
+        return $this->dateTime;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(DateTimeInterface $date): self
     {
-        $this->date = $date;
+        $this->dateTime = $date;
 
         return $this;
     }
@@ -372,11 +379,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeFavorite(Favorite $favorite): static
     {
-        if ($this->favorites->removeElement($favorite)) {
-            // set the owning side to null (unless already changed)
-            if ($favorite->getUser() === $this) {
-                $favorite->setUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->favorites->removeElement($favorite) && $favorite->getUser() === $this) {
+            $favorite->setUser(null);
         }
 
         return $this;
@@ -402,11 +407,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeUserBooksRead(UserBooksRead $userBooksRead): static
     {
-        if ($this->userBooksReads->removeElement($userBooksRead)) {
-            // set the owning side to null (unless already changed)
-            if ($userBooksRead->getUser() === $this) {
-                $userBooksRead->setUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->userBooksReads->removeElement($userBooksRead) && $userBooksRead->getUser() === $this) {
+            $userBooksRead->setUser(null);
         }
 
         return $this;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Books;
@@ -18,9 +20,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserBooksReadRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, UserBooksRead::class);
+        parent::__construct($managerRegistry, UserBooksRead::class);
     }
 
     public function existsBookToUserList(Books|int $book, User|int $user): ?UserBooksRead
@@ -32,7 +34,7 @@ class UserBooksReadRepository extends ServiceEntityRepository
     {
         $existsBookToUser = $this->existsBookToUserList($book, $user);
 
-        if(!$existsBookToUser) {
+        if(!$existsBookToUser instanceof UserBooksRead) {
             return new UserBooksRead();
         }
 

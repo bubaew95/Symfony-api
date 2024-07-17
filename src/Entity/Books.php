@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTime;
+use DateTimeInterface;
 use App\Repository\BooksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,6 +14,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 class Books
 {
+    public $dispatch;
+
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
     #[ORM\Column(type: "integer")]
@@ -46,7 +52,7 @@ class Books
     private ?int $recomented = null;
 
     #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: "books")]
-    private ?Categories $category = null;
+    private ?Categories $categories = null;
 
     #[ORM\Column(type: "string", length: 100, nullable: true)]
     private ?string $author = null;
@@ -55,7 +61,7 @@ class Books
     private Collection $review;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTime $date = null;
+    private ?DateTime $dateTime = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $publisher = null;
@@ -220,12 +226,12 @@ class Books
 
     public function getCategory(): ?Categories
     {
-        return $this->category;
+        return $this->categories;
     }
 
-    public function setCategory(?Categories $category): self
+    public function setCategory(?Categories $categories): self
     {
-        $this->category = $category;
+        $this->categories = $categories;
 
         return $this;
     }
@@ -242,14 +248,14 @@ class Books
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
-        return $this->date;
+        return $this->dateTime;
     }
 
-    public function setDate(?\DateTimeInterface $date): self
+    public function setDate(?DateTimeInterface $date): self
     {
-        $this->date = $date;
+        $this->dateTime = $date;
 
         return $this;
     }

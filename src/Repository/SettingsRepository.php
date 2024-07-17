@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Settings;
@@ -17,9 +19,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SettingsRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Settings::class);
+        parent::__construct($managerRegistry, Settings::class);
     }
 
     public function settingsQuery(): QueryBuilder

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Page;
@@ -19,18 +21,18 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InfoRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Page::class);
+        parent::__construct($managerRegistry, Page::class);
     }
 
     /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function add(Page $entity, bool $flush = true): void
+    public function add(Page $page, bool $flush = true): void
     {
-        $this->_em->persist($entity);
+        $this->_em->persist($page);
         if ($flush) {
             $this->_em->flush();
         }
@@ -40,9 +42,9 @@ class InfoRepository extends ServiceEntityRepository
      * @throws ORMException
      * @throws OptimisticLockException
      */
-    public function remove(Page $entity, bool $flush = true): void
+    public function remove(Page $page, bool $flush = true): void
     {
-        $this->_em->remove($entity);
+        $this->_em->remove($page);
         if ($flush) {
             $this->_em->flush();
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\FavoriteRepository;
@@ -14,7 +16,7 @@ class Favorite
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
-    private ?Books $book = null;
+    private ?Books $books = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
     private ?User $user = null;
@@ -26,12 +28,12 @@ class Favorite
 
     public function getBook(): ?Books
     {
-        return $this->book;
+        return $this->books;
     }
 
-    public function setBook(?Books $book): static
+    public function setBook(?Books $books): static
     {
-        $this->book = $book;
+        $this->books = $books;
 
         return $this;
     }

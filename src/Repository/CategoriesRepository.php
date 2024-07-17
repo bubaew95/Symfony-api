@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Categories;
@@ -18,9 +20,9 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
  */
 class CategoriesRepository extends NestedTreeRepository
 {
-    public function __construct(EntityManagerInterface $registry)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, $registry->getClassMetadata(Categories::class));
+        parent::__construct($entityManager, $entityManager->getClassMetadata(Categories::class));
     }
 
     public function getMenu($value): Query

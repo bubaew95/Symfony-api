@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Books;
@@ -19,14 +21,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class BooksRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Books::class);
+        parent::__construct($managerRegistry, Books::class);
     }
 
     public function findAllWithCategory(string $slug = null, User|int $user = null, string $sort = 'id'): QueryBuilder
     {
-        $query = $this->createQueryBuilder('b')
+        $queryBuilder = $this->createQueryBuilder('b')
             ->addSelect('c', 'f')
             ->innerJoin('b.category', 'c')
             ->leftJoin('b.favorites', 'f',  Join::WITH, 'f.user = :user')
@@ -34,10 +36,10 @@ class BooksRepository extends ServiceEntityRepository
         ;
 
         if(!is_null($slug)) {
-            $query->andWhere('c.name_url = :slug')->setParameter('slug', $slug);
+            $queryBuilder->andWhere('c.name_url = :slug')->setParameter('slug', $slug);
         }
 
-        return $query->orderBy("b.{$sort}", 'DESC');
+        return $queryBuilder->orderBy('b.' . $sort, 'DESC');
     }
 
     public function oneCategory(string $slug, User|int $user = null, int $limit = 8): mixed
@@ -64,13 +66,13 @@ class BooksRepository extends ServiceEntityRepository
             ->innerJoin('b.category', 'category')
             ->addSelect('category')
             ->andWhere('b.name LIKE :q or b.author LIKE :q')
-            ->setParameter('q', "%{$q}%")
+            ->setParameter('q', sprintf('%%%s%%', $q))
         ;
     }
 
     public function findBookById(int $id): Books
     {
-        if(!$id) {
+        if($id === 0) {
             throw new InvalidArgumentException();
         }
 

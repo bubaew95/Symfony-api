@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
+use DateTimeInterface;
 use App\Repository\UserBooksReadRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,13 +20,13 @@ class UserBooksRead
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'userBooksReads')]
-    private ?Books $book = null;
+    private ?Books $books = null;
 
     #[ORM\ManyToOne(inversedBy: 'userBooksReads')]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    private ?DateTimeInterface $dateTime = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $page = null;
@@ -38,12 +41,12 @@ class UserBooksRead
 
     public function getBook(): ?Books
     {
-        return $this->book;
+        return $this->books;
     }
 
-    public function setBook(?Books $book): static
+    public function setBook(?Books $books): static
     {
-        $this->book = $book;
+        $this->books = $books;
 
         return $this;
     }
@@ -60,14 +63,14 @@ class UserBooksRead
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
-        return $this->date;
+        return $this->dateTime;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(DateTimeInterface $date): static
     {
-        $this->date = $date;
+        $this->dateTime = $date;
 
         return $this;
     }

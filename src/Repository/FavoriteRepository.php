@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Favorite;
@@ -18,9 +20,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FavoriteRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Favorite::class);
+        parent::__construct($managerRegistry, Favorite::class);
     }
 
     public function favoriteQueryBuilder(User|int $user) : QueryBuilder

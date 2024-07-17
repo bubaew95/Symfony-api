@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Review;
@@ -17,9 +19,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ReviewRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($registry, Review::class);
+        parent::__construct($managerRegistry, Review::class);
     }
 
     public function getReviewsWithBook(int $id, int $page, int $limit) : array

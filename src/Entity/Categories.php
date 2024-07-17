@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
  
+use Stringable;
 use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +15,7 @@ use JetBrains\PhpStorm\Pure;
 #[Gedmo\Tree(type: "nested")]
 #[ORM\Table(name: "categories")]
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
-class Categories
+class Categories implements Stringable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "AUTO")]
@@ -88,9 +91,9 @@ class Categories
         return $this->root;
     }
 
-    public function setParent(?Categories $parent): void
+    public function setParent(?Categories $categories): void
     {
-        $this->parent = $parent;
+        $this->parent = $categories;
     }
 
     public function getParent(): ?Categories
@@ -175,31 +178,26 @@ class Categories
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getBooks(): Collection
     {
         return $this->books;
     }
 
-    public function addBook(Books $book): self
+    public function addBook(Books $books): self
     {
-        if (!$this->books->contains($book)) {
-            $this->books[] = $book;
-            $book->setCategory($this);
+        if (!$this->books->contains($books)) {
+            $this->books[] = $books;
+            $books->setCategory($this);
         }
 
         return $this;
     }
 
-    public function removeBook(Books $book): self
+    public function removeBook(Books $books): self
     {
-        if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
-            if ($book->getCategory() === $this) {
-                $book->setCategory(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->books->removeElement($books) && $books->getCategory() === $this) {
+            $books->setCategory(null);
         }
 
         return $this;
@@ -207,6 +205,6 @@ class Categories
 
     public function __toString(): string
     {
-        return $this->getName();
+        return (string) $this->getName();
     }
 }

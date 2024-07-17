@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
@@ -31,7 +33,7 @@ class Review
     private Collection $parent;
 
     #[ORM\ManyToOne(targetEntity: Review::class, inversedBy: "parent")]
-    private ?Review $reviews = null;
+    private ?Review $review = null;
 
     #[ORM\ManyToOne(targetEntity: Books::class, fetch: 'EXTRA_LAZY', inversedBy: "review")]
     private Books $books;
@@ -91,12 +93,12 @@ class Review
 
     public function getReviews(): ?Review
     {
-        return $this->reviews;
+        return $this->review;
     }
 
-    public function setReviews(?Review $reviews): self
+    public function setReviews(?Review $review): self
     {
-        $this->reviews = $reviews;
+        $this->review = $review;
         return $this;
     }
 
