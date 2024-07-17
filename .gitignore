@@ -15,9 +15,6 @@ phpstan.neon
 
 /node_modules
 
-/tools/php-cs-fixer/vendor/
-/.php-cs-fixer.cache
 ###> friendsofphp/php-cs-fixer ###
-/.php-cs-fixer.php
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
