@@ -50,7 +50,7 @@ class Books
     private ?int $recomented = null;
 
     #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: 'books')]
-    private ?Categories $categories = null;
+    private ?Categories $category = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $author = null;
@@ -59,7 +59,7 @@ class Books
     private Collection $review;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTime $dateTime = null;
+    private ?\DateTime $date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $publisher = null;
@@ -225,12 +225,12 @@ class Books
 
     public function getCategory(): ?Categories
     {
-        return $this->categories;
+        return $this->category;
     }
 
     public function setCategory(?Categories $categories): self
     {
-        $this->categories = $categories;
+        $this->category = $categories;
 
         return $this;
     }
@@ -249,12 +249,12 @@ class Books
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->dateTime;
+        return $this->date;
     }
 
     public function setDate(?\DateTimeInterface $date): self
     {
-        $this->dateTime = $date;
+        $this->date = $date;
 
         return $this;
     }

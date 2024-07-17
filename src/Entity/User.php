@@ -105,7 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $status = null;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTime $dateTime;
+    private \DateTime $date;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $hash = null;
@@ -330,12 +330,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->dateTime;
+        return $this->date;
     }
 
     public function setDate(\DateTimeInterface $date): self
     {
-        $this->dateTime = $date;
+        $this->date = $date;
 
         return $this;
     }
