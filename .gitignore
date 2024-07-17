@@ -13,5 +13,7 @@
 phpstan.neon
 ###< phpstan/phpstan ###
 
+/node_modules
+
 /tools/php-cs-fixer/vendor/
 /.php-cs-fixer.cache
