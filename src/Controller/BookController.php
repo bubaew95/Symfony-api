@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class BookController extends AbstractController
 {
-    #[Route('/', name: 'app_main' )]
+    #[Route('/', name: 'app_main')]
     public function index(): Response
     {
         return new Response('test');
