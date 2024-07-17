@@ -167,6 +167,7 @@ class Banner
     public function setVisible(?bool $visible): Banner
     {
         $this->visible = $visible;
+
         return $this;
     }
 }

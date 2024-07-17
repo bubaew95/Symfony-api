@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use DateTime;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
@@ -42,7 +41,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function usersQuery() : QueryBuilder
+    public function usersQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('u')
             ->orderBy('u.id', 'DESC')
@@ -55,7 +54,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      */
     public function analytics(): array
     {
-        $thirtyDaysAgo = new DateTime();
+        $thirtyDaysAgo = new \DateTime();
         $thirtyDaysAgo->modify('-30 days');
 
         return $this->_em->createQuery(

@@ -3,85 +3,84 @@
 declare(strict_types=1);
 
 namespace App\Entity;
- 
-use Stringable;
+
 use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use JetBrains\PhpStorm\Pure;
 
-#[Gedmo\Tree(type: "nested")]
-#[ORM\Table(name: "categories")]
+#[Gedmo\Tree(type: 'nested')]
+#[ORM\Table(name: 'categories')]
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
-class Categories implements Stringable
+class Categories implements \Stringable
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private ?string $name = null;
 
-    #[ORM\Column(type: "string", length: 150)]
+    #[ORM\Column(type: 'string', length: 150)]
     private ?string $name_url = null;
 
-    #[ORM\Column(type: "string", length: 6)]
+    #[ORM\Column(type: 'string', length: 6)]
     private ?string $bbk = null;
 
-    #[ORM\Column(type: "string", length: 100)]
+    #[ORM\Column(type: 'string', length: 100)]
     private ?string $directory = null;
 
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(mappedBy: "category", targetEntity: Books::class)]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Books::class)]
     private Collection $books;
 
     #[
         Gedmo\TreeLeft,
-        ORM\Column(name: "lft", type: "integer")
-     ]
+        ORM\Column(name: 'lft', type: 'integer')
+    ]
     private ?int $lft = null;
 
     #[
         Gedmo\TreeLevel,
-        ORM\Column(name: "lvl", type: "integer")
+        ORM\Column(name: 'lvl', type: 'integer')
     ]
     private ?int $lvl = null;
 
     #[
         Gedmo\TreeRight,
-        ORM\Column(name: "rgt", type: "integer")
+        ORM\Column(name: 'rgt', type: 'integer')
     ]
     private ?int $rgt = null;
 
     #[
         Gedmo\TreeRoot,
-        ORM\ManyToOne(targetEntity: "Categories"),
-        ORM\JoinColumn(name: "tree_root", referencedColumnName: "id", onDelete: "CASCADE")
+        ORM\ManyToOne(targetEntity: 'Categories'),
+        ORM\JoinColumn(name: 'tree_root', referencedColumnName: 'id', onDelete: 'CASCADE')
     ]
     private ?Categories $root = null;
 
     #[
         Gedmo\TreeParent,
-        ORM\ManyToOne(targetEntity: "Categories", inversedBy: "children"),
-        ORM\JoinColumn(name: "parent_id", referencedColumnName: "id", onDelete: "CASCADE")
+        ORM\ManyToOne(targetEntity: 'Categories', inversedBy: 'children'),
+        ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')
     ]
     private ?Categories $parent = null;
 
     #[
-        ORM\OneToMany(mappedBy: "parent", targetEntity: "Categories"),
+        ORM\OneToMany(mappedBy: 'parent', targetEntity: 'Categories'),
         ORM\OrderBy(['lft' => 'ASC'])
     ]
     private Collection $children;
 
-    #[ORM\Column(type: "smallint", nullable: true)]
+    #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $block = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->books = new ArrayCollection();
         $this->children = new ArrayCollection();
     }

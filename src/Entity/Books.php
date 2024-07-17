@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
 use App\Repository\BooksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,51 +15,51 @@ class Books
     public $dispatch;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $year = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $image = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $file = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $alias = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $keywords = null;
 
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $text = null;
 
-    #[ORM\Column(type: "smallint", nullable: true)]
+    #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $recomented = null;
 
-    #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: "books")]
+    #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: 'books')]
     private ?Categories $categories = null;
 
-    #[ORM\Column(type: "string", length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $author = null;
 
-    #[ORM\OneToMany(mappedBy: "books", targetEntity: Review::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'books', targetEntity: Review::class, cascade: ['persist', 'remove'])]
     private Collection $review;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?DateTime $dateTime = null;
+    private ?\DateTime $dateTime = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $publisher = null;
@@ -81,7 +79,8 @@ class Books
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: UserBooksRead::class, cascade: ['persist', 'remove'])]
     private Collection $userBooksReads;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->review = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->userBooksReads = new ArrayCollection();
@@ -248,12 +247,12 @@ class Books
         return $this;
     }
 
-    public function getDate(): ?DateTimeInterface
+    public function getDate(): ?\DateTimeInterface
     {
         return $this->dateTime;
     }
 
-    public function setDate(?DateTimeInterface $date): self
+    public function setDate(?\DateTimeInterface $date): self
     {
         $this->dateTime = $date;
 
@@ -309,6 +308,7 @@ class Books
     public function setPages(?int $pages): self
     {
         $this->pages = $pages;
+
         return $this;
     }
 

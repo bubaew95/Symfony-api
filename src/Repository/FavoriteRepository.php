@@ -25,7 +25,7 @@ class FavoriteRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, Favorite::class);
     }
 
-    public function favoriteQueryBuilder(User|int $user) : QueryBuilder
+    public function favoriteQueryBuilder(User|int $user): QueryBuilder
     {
         return $this->createQueryBuilder('f')
             ->addSelect('b', 'u')

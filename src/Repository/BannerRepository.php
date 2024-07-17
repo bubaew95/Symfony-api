@@ -24,7 +24,7 @@ class BannerRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, Banner::class);
     }
 
-    public function bannersQuery() : QueryBuilder
+    public function bannersQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('b')
             ->orderBy('b.id', 'DESC')

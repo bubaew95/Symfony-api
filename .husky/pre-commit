@@ -2,5 +2,8 @@
 # Запуск Rector
 vendor/bin/rector process
 
+# Запуск Cs-Fixter
+vendor/bin/php-cs-fixer fix
+
 # Линтинг YAML файлов
 php bin/console lint:yaml config

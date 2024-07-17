@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTimeInterface;
 use App\Repository\UserBooksReadRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation\Timestampable;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: UserBooksReadRepository::class)]
 class UserBooksRead
@@ -26,7 +23,7 @@ class UserBooksRead
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $dateTime = null;
+    private ?\DateTimeInterface $dateTime = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $page = null;
@@ -63,12 +60,12 @@ class UserBooksRead
         return $this;
     }
 
-    public function getDate(): ?DateTimeInterface
+    public function getDate(): ?\DateTimeInterface
     {
         return $this->dateTime;
     }
 
-    public function setDate(DateTimeInterface $date): static
+    public function setDate(\DateTimeInterface $date): static
     {
         $this->dateTime = $date;
 

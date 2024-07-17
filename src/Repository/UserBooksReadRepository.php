@@ -34,7 +34,7 @@ class UserBooksReadRepository extends ServiceEntityRepository
     {
         $existsBookToUser = $this->existsBookToUserList($book, $user);
 
-        if(!$existsBookToUser instanceof UserBooksRead) {
+        if (!$existsBookToUser instanceof UserBooksRead) {
             return new UserBooksRead();
         }
 

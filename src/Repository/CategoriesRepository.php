@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Categories;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ManagerRegistry;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
@@ -36,7 +34,7 @@ class CategoriesRepository extends NestedTreeRepository
         ;
     }
 
-    public function categoriesQuery() : QueryBuilder
+    public function categoriesQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('c')
             ->orderBy('c.name', 'ASC')

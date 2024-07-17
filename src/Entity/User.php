@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,8 +16,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[
     ORM\Entity(repositoryClass: UserRepository::class),
     UniqueEntity(
-        fields: ["email"],
-        message: "Такой емайл уже зарегистрирован"
+        fields: ['email'],
+        message: 'Такой емайл уже зарегистрирован'
     )
 ]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -35,84 +33,84 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUSES = [
         self::STATUS_PASSWORD_UPDATE => [
             'color' => 'warning',
-            'text' => 'Необходимо обновить пароль'
+            'text' => 'Необходимо обновить пароль',
         ],
         self::STATUS_ACTIVED => [
             'color' => 'success',
-            'text' => 'Активен'
+            'text' => 'Активен',
         ],
         self::STATUS_DEACTIVATED => [
             'color' => 'danger',
-            'text' => 'Деактивирован'
+            'text' => 'Деактивирован',
         ],
         self::STATUS_BAN => [
             'color' => 'danger',
-            'text' => 'Заблокирован'
+            'text' => 'Заблокирован',
         ],
     ];
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[
-        Assert\NotBlank(message: "Поле Email не может быть пустым"),
-        Assert\Email(message: "Некорректный формат Email"),
-        ORM\Column(type: "string", length: 180, unique: true)
+        Assert\NotBlank(message: 'Поле Email не может быть пустым'),
+        Assert\Email(message: 'Некорректный формат Email'),
+        ORM\Column(type: 'string', length: 180, unique: true)
     ]
     private ?string $email = null;
 
-    #[ORM\Column(type: "json")]
+    #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: 'string')]
     private string $password;
 
     #[
-        Assert\NotBlank(message: "Поле {{ label }} не может быть пустым", groups: ["registration"]),
-        ORM\Column(type: "string", length: 20, nullable: true),
+        Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration']),
+        ORM\Column(type: 'string', length: 20, nullable: true),
         Assert\Regex('/^((8|\+?7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/', 'Некорректный формат номера телефона.')
     ]
     private ?string $phone = null;
 
     #[
-        Assert\NotBlank(message: "Поле {{ label }} не может быть пустым", groups: ["registration"]),
-        ORM\Column(type: "string", length: 255, nullable: true)
+        Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration']),
+        ORM\Column(type: 'string', length: 255, nullable: true)
     ]
     private ?string $work_or_school = null;
 
-    #[ORM\Column(type: "boolean", nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $is_admin = null;
 
-    #[ORM\Column(type: "boolean", nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $actived = null;
 
-    #[ORM\Column(type: "string", length: 16, nullable: true)]
+    #[ORM\Column(type: 'string', length: 16, nullable: true)]
     private ?string $ip = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $user_agent = null;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $home_address = null;
 
-    #[ORM\Column(type: "boolean", nullable: true)]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?string $isSubscribe = null;
 
-    #[ORM\Column(type: "string", length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $last_sur_name = null;
 
-    #[ORM\Column(type: "string", length: 25, nullable: true)]
+    #[ORM\Column(type: 'string', length: 25, nullable: true)]
     private ?string $status = null;
 
-    #[ORM\Column(type: "datetime")]
-    private DateTime $dateTime;
+    #[ORM\Column(type: 'datetime')]
+    private \DateTime $dateTime;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $hash = null;
 
-    #[ORM\OneToMany(mappedBy: "user", targetEntity: Review::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Review::class)]
     private Collection $review;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Favorite::class)]
@@ -121,15 +119,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserBooksRead::class)]
     private Collection $userBooksReads;
 
-    #[Assert\NotBlank(message: "Поле {{ label }} не может быть пустым", groups: ["registration"])]
+    #[Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration'])]
     #[ORM\Column(length: 60)]
     private ?string $first_name = null;
 
-    #[Assert\NotBlank(message: "Поле {{ label }} не может быть пустым", groups: ["registration"])]
+    #[Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration'])]
     #[ORM\Column(length: 60)]
     private ?string $middle_name = null;
 
-    #[Assert\NotBlank(message: "Поле {{ label }} не может быть пустым", groups: ["registration"])]
+    #[Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration'])]
     #[ORM\Column(length: 60)]
     private ?string $last_name = null;
 
@@ -164,7 +162,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
@@ -311,7 +309,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return sprintf('%s %s %s', $this->getFirstName(), $this->getMiddleName(), $this->getLastName());
     }
 
-    public function getUserNameFromReview() : ? string
+    public function getUserNameFromReview(): ?string
     {
         $middleName = mb_substr((string) $this->getMiddleName(), 0, 1);
 
@@ -330,12 +328,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDate(): ?DateTimeInterface
+    public function getDate(): ?\DateTimeInterface
     {
         return $this->dateTime;
     }
 
-    public function setDate(DateTimeInterface $date): self
+    public function setDate(\DateTimeInterface $date): self
     {
         $this->dateTime = $date;
 
@@ -435,6 +433,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMiddleName(?string $middle_name): static
     {
         $this->middle_name = $middle_name;
+
         return $this;
     }
 
@@ -446,7 +445,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastName(?string $last_name): static
     {
         $this->last_name = $last_name;
+
         return $this;
     }
-
 }

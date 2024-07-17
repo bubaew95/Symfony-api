@@ -24,7 +24,7 @@ class ReviewRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, Review::class);
     }
 
-    public function getReviewsWithBook(int $id, int $page, int $limit) : array
+    public function getReviewsWithBook(int $id, int $page, int $limit): array
     {
         $queryBuilder = $this->_em->createQuery(
             'SELECT r, u FROM App\Entity\Review r INNER JOIN r.user u WHERE r.books = :id ORDER BY r.id DESC'
@@ -38,7 +38,7 @@ class ReviewRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getReviewRatingWithBookById(int $id) : mixed
+    public function getReviewRatingWithBookById(int $id): mixed
     {
         $queryBuilder = $this->_em->createQuery(
             'SELECT COUNT(r.id) as voter, SUM(r.rating) as rating FROM App\Entity\Review r WHERE r.books = :id '
@@ -50,7 +50,7 @@ class ReviewRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getReviewStarsById(int $id) : mixed
+    public function getReviewStarsById(int $id): mixed
     {
         $queryBuilder = $this->_em->createQuery(
             'SELECT COUNT(r.id) as count, r.rating FROM App\Entity\Review r WHERE r.books = :id GROUP BY r.rating ORDER BY r.rating DESC'
@@ -62,7 +62,7 @@ class ReviewRepository extends ServiceEntityRepository
         ;
     }
 
-    public function reviewsQuery() : QueryBuilder
+    public function reviewsQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('r')
             ->addSelect('b, u')
@@ -71,5 +71,4 @@ class ReviewRepository extends ServiceEntityRepository
             ->orderBy('r.id', 'DESC')
         ;
     }
-
 }

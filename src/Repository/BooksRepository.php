@@ -26,23 +26,23 @@ class BooksRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, Books::class);
     }
 
-    public function findAllWithCategory(string $slug = null, User|int $user = null, string $sort = 'id'): QueryBuilder
+    public function findAllWithCategory(?string $slug = null, User|int|null $user = null, string $sort = 'id'): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->addSelect('c', 'f')
             ->innerJoin('b.category', 'c')
-            ->leftJoin('b.favorites', 'f',  Join::WITH, 'f.user = :user')
+            ->leftJoin('b.favorites', 'f', Join::WITH, 'f.user = :user')
             ->setParameter('user', $user)
         ;
 
-        if(!is_null($slug)) {
+        if (!is_null($slug)) {
             $queryBuilder->andWhere('c.name_url = :slug')->setParameter('slug', $slug);
         }
 
-        return $queryBuilder->orderBy('b.' . $sort, 'DESC');
+        return $queryBuilder->orderBy('b.'.$sort, 'DESC');
     }
 
-    public function oneCategory(string $slug, User|int $user = null, int $limit = 8): mixed
+    public function oneCategory(string $slug, User|int|null $user = null, int $limit = 8): mixed
     {
         return $this->findAllWithCategory($slug, $user)
             ->setMaxResults($limit)
@@ -51,7 +51,7 @@ class BooksRepository extends ServiceEntityRepository
         ;
     }
 
-    public function latestBooks(int $limit = 5, User|int $user = null): mixed
+    public function latestBooks(int $limit = 5, User|int|null $user = null): mixed
     {
         return $this->findAllWithCategory(user: $user)
             ->setMaxResults($limit)
@@ -72,12 +72,12 @@ class BooksRepository extends ServiceEntityRepository
 
     public function findBookById(int $id): Books
     {
-        if($id === 0) {
+        if ($id === 0) {
             throw new InvalidArgumentException();
         }
 
         $book = $this->find($id);
-        if(null === $book) {
+        if (null === $book) {
             throw new NotFoundHttpException('Документ не найден.');
         }
 

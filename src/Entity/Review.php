@@ -16,26 +16,26 @@ class Review
     use TimestampableEntity;
 
     #[ORM\Id]
-    #[ORM\GeneratedValue(strategy: "AUTO")]
-    #[ORM\Column(type: "integer")]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'LAZY', inversedBy: "review")]
+    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'LAZY', inversedBy: 'review')]
     private User $user;
 
-    #[ORM\Column(type: "text", nullable: false)]
+    #[ORM\Column(type: 'text', nullable: false)]
     private string $text;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?int $rating = null;
 
-    #[ORM\OneToMany(mappedBy: "reviews", targetEntity: Review::class)]
+    #[ORM\OneToMany(mappedBy: 'reviews', targetEntity: Review::class)]
     private Collection $parent;
 
-    #[ORM\ManyToOne(targetEntity: Review::class, inversedBy: "parent")]
+    #[ORM\ManyToOne(targetEntity: Review::class, inversedBy: 'parent')]
     private ?Review $review = null;
 
-    #[ORM\ManyToOne(targetEntity: Books::class, fetch: 'EXTRA_LAZY', inversedBy: "review")]
+    #[ORM\ManyToOne(targetEntity: Books::class, fetch: 'EXTRA_LAZY', inversedBy: 'review')]
     private Books $books;
 
     #[ORM\Column(nullable: true)]
@@ -44,7 +44,8 @@ class Review
     #[ORM\Column(nullable: true)]
     private ?int $dislikes = null;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->parent = new ArrayCollection();
     }
 
@@ -61,6 +62,7 @@ class Review
     public function setUser(User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -72,6 +74,7 @@ class Review
     public function setText(string $text): self
     {
         $this->text = $text;
+
         return $this;
     }
 
@@ -83,6 +86,7 @@ class Review
     public function setRating(?int $rating): self
     {
         $this->rating = $rating;
+
         return $this;
     }
 
@@ -99,6 +103,7 @@ class Review
     public function setReviews(?Review $review): self
     {
         $this->review = $review;
+
         return $this;
     }
 
@@ -110,6 +115,7 @@ class Review
     public function setBooks(Books $books): self
     {
         $this->books = $books;
+
         return $this;
     }
 
