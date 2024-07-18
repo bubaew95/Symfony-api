@@ -10,6 +10,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Gedmo\Tree(type: 'nested')]
 #[ORM\Table(name: 'categories')]
@@ -17,14 +20,19 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[ApiResource]
 class Categories implements \Stringable
 {
+    #[Groups(['book:item:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Groups(['book:item:read', 'books:write'])]
     #[ORM\Column(type: 'string', length: 100)]
     private ?string $name = null;
 
+    #[SerializedName('slug')]
+    #[Groups(['book:item:read', 'books:write'])]
     #[ORM\Column(type: 'string', length: 150)]
     private ?string $name_url = null;
 

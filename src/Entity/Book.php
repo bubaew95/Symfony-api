@@ -8,6 +8,11 @@ use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\BooksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,12 +22,24 @@ use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\String\UnicodeString;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ORM\Table('books')]
 #[ApiResource(
     description: 'Книги',
+    operations: [
+        new Get(
+            normalizationContext: [
+                'groups' => ['books:read', 'book:item:read'],
+            ]
+        ),
+        new GetCollection(),
+        new Post(),
+        new Delete(),
+        new Put()
+    ],
     formats: [
         'json',
         'jsonld',
@@ -70,6 +87,7 @@ class Book
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
 
+    #[Groups(['books:read', 'books:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
@@ -88,7 +106,9 @@ class Book
     #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $recomented = null;
 
-    #[ORM\ManyToOne(targetEntity: Categories::class, inversedBy: 'books')]
+    #[Assert\Valid]
+    #[Groups(['books:read', 'books:write'])]
+    #[ORM\ManyToOne(targetEntity: Categories::class, cascade: ['persist'], inversedBy: 'books')]
     private ?Categories $category = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
@@ -113,12 +133,13 @@ class Book
     #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $pages = null;
 
-    #[Ignore]
     #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'books', fetch: 'EXTRA_LAZY')]
     private Collection $favorites;
 
-    #[Ignore]
-    #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'books', cascade: ['persist', 'remove'])]
+    #[SerializedName('readBooks')]
+    #[Groups(['books:read', 'books:write'])]
+    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'book', cascade: ['persist', 'remove'])]
     private Collection $userBooksReads;
 
     public function __construct()

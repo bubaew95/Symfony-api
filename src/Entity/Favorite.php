@@ -18,6 +18,7 @@ class Favorite
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
+    #[ORM\JoinColumn(name: 'book_id')]
     private ?Book $books = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]

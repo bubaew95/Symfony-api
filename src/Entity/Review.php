@@ -31,10 +31,11 @@ class Review
     #[ORM\Column(type: 'string', nullable: true)]
     private ?int $rating = null;
 
-    #[ORM\OneToMany(mappedBy: 'reviews', targetEntity: Review::class)]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'reviews')]
     private Collection $parent;
 
     #[ORM\ManyToOne(targetEntity: Review::class, inversedBy: 'parent')]
+    #[ORM\JoinColumn(name: 'reviews_id')]
     private ?Review $review = null;
 
     #[ORM\ManyToOne(targetEntity: Book::class, fetch: 'EXTRA_LAZY', inversedBy: 'review')]

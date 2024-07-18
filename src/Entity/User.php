@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
@@ -20,6 +26,20 @@ use Symfony\Component\Validator\Constraints as Assert;
         message: 'Такой емайл уже зарегистрирован'
     )
 ]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Delete(),
+    ],
+    normalizationContext: [
+        'groups' => ['user:read'],
+    ],
+    denormalizationContext: [
+        'groups' => ['user:write'],
+    ]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const STATUS_PASSWORD_UPDATE = 'password_update';
@@ -54,6 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Groups(['user:read', 'user:write', 'books:read'])]
     #[
         Assert\NotBlank(message: 'Поле Email не может быть пустым'),
         Assert\Email(message: 'Некорректный формат Email'),
@@ -64,9 +85,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
+    #[Groups(['user:write'])]
     #[ORM\Column(type: 'string')]
     private string $password;
 
+    #[Groups(['user:read', 'user:write'])]
     #[
         Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration']),
         ORM\Column(type: 'string', length: 20, nullable: true),
@@ -110,7 +133,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $hash = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Review::class)]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
     private Collection $review;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Favorite::class)]
@@ -119,14 +142,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserBooksRead::class)]
     private Collection $userBooksReads;
 
+    #[Groups(['user:read', 'user:write'])]
     #[Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration'])]
     #[ORM\Column(length: 60)]
     private ?string $first_name = null;
 
+    #[Groups(['user:read', 'user:write'])]
     #[Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration'])]
     #[ORM\Column(length: 60)]
     private ?string $middle_name = null;
 
+    #[Groups(['user:read', 'user:write'])]
     #[Assert\NotBlank(message: 'Поле {{ label }} не может быть пустым', groups: ['registration'])]
     #[ORM\Column(length: 60)]
     private ?string $last_name = null;
@@ -136,6 +162,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->review = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->userBooksReads = new ArrayCollection();
+        $this->date = new \DateTime();
     }
 
     public function getId(): ?int
@@ -304,6 +331,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Groups(['books:read'])]
     public function getFullName(): ?string
     {
         return sprintf('%s %s %s', $this->getFirstName(), $this->getMiddleName(), $this->getLastName());

@@ -8,28 +8,33 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserBooksReadRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserBooksReadRepository::class)]
-#[ApiResource]
+#[ApiResource()]
 class UserBooksRead
 {
+    #[Groups(['books:read'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'userBooksReads')]
-    private ?Book $books = null;
+    private ?Book $book = null;
 
+    #[Groups(['books:read'])]
     #[ORM\ManyToOne(inversedBy: 'userBooksReads')]
     private ?User $user = null;
 
+    #[Groups(['books:read'])]
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $page = null;
 
+    #[Groups(['books:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $count = null;
 
@@ -40,12 +45,12 @@ class UserBooksRead
 
     public function getBook(): ?Book
     {
-        return $this->books;
+        return $this->book;
     }
 
     public function setBook(?Book $books): static
     {
-        $this->books = $books;
+        $this->book = $books;
 
         return $this;
     }
