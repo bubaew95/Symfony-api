@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserBooksReadRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserBooksReadRepository::class)]
+#[ApiResource]
 class UserBooksRead
 {
     #[ORM\Id]
@@ -17,13 +19,13 @@ class UserBooksRead
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'userBooksReads')]
-    private ?Books $books = null;
+    private ?Book $books = null;
 
     #[ORM\ManyToOne(inversedBy: 'userBooksReads')]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateTime = null;
+    private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $page = null;
@@ -36,12 +38,12 @@ class UserBooksRead
         return $this->id;
     }
 
-    public function getBook(): ?Books
+    public function getBook(): ?Book
     {
         return $this->books;
     }
 
-    public function setBook(?Books $books): static
+    public function setBook(?Book $books): static
     {
         $this->books = $books;
 
@@ -62,12 +64,12 @@ class UserBooksRead
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->dateTime;
+        return $this->date;
     }
 
     public function setDate(\DateTimeInterface $date): static
     {
-        $this->dateTime = $date;
+        $this->date = $date;
 
         return $this;
     }

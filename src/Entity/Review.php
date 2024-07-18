@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ReviewRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
+#[ApiResource]
 class Review
 {
     use TimestampableEntity;
@@ -35,8 +37,8 @@ class Review
     #[ORM\ManyToOne(targetEntity: Review::class, inversedBy: 'parent')]
     private ?Review $review = null;
 
-    #[ORM\ManyToOne(targetEntity: Books::class, fetch: 'EXTRA_LAZY', inversedBy: 'review')]
-    private Books $books;
+    #[ORM\ManyToOne(targetEntity: Book::class, fetch: 'EXTRA_LAZY', inversedBy: 'review')]
+    private Book $books;
 
     #[ORM\Column(nullable: true)]
     private ?int $likes = null;
@@ -107,12 +109,12 @@ class Review
         return $this;
     }
 
-    public function getBooks(): Books
+    public function getBooks(): Book
     {
         return $this->books;
     }
 
-    public function setBooks(Books $books): self
+    public function setBooks(Book $books): self
     {
         $this->books = $books;
 

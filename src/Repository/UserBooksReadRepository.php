@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Books;
+use App\Entity\Book;
 use App\Entity\User;
 use App\Entity\UserBooksRead;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -25,12 +25,12 @@ class UserBooksReadRepository extends ServiceEntityRepository
         parent::__construct($managerRegistry, UserBooksRead::class);
     }
 
-    public function existsBookToUserList(Books|int $book, User|int $user): ?UserBooksRead
+    public function existsBookToUserList(Book|int $book, User|int $user): ?UserBooksRead
     {
         return $this->findOneBy(['book' => $book, 'user' => $user]);
     }
 
-    public function findOrCreate(Books|int $book, User|int $user): UserBooksRead
+    public function findOrCreate(Book|int $book, User|int $user): UserBooksRead
     {
         $existsBookToUser = $this->existsBookToUserList($book, $user);
 

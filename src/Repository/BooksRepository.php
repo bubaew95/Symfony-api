@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Books;
+use App\Entity\Book;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -14,16 +14,16 @@ use http\Exception\InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * @method Books|null find($id, $lockMode = null, $lockVersion = null)
- * @method Books|null findOneBy(array $criteria, array $orderBy = null)
- * @method Books[]    findAll()
- * @method Books[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Book|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Book|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Book[]    findAll()
+ * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class BooksRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $managerRegistry)
     {
-        parent::__construct($managerRegistry, Books::class);
+        parent::__construct($managerRegistry, Book::class);
     }
 
     public function findAllWithCategory(?string $slug = null, User|int|null $user = null, string $sort = 'id'): QueryBuilder
@@ -70,7 +70,7 @@ class BooksRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findBookById(int $id): Books
+    public function findBookById(int $id): Book
     {
         if ($id === 0) {
             throw new InvalidArgumentException();

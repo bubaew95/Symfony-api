@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\FavoriteRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FavoriteRepository::class)]
+#[ApiResource]
 class Favorite
 {
     #[ORM\Id]
@@ -16,7 +18,7 @@ class Favorite
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
-    private ?Books $books = null;
+    private ?Book $books = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
     private ?User $user = null;
@@ -26,12 +28,12 @@ class Favorite
         return $this->id;
     }
 
-    public function getBook(): ?Books
+    public function getBook(): ?Book
     {
         return $this->books;
     }
 
-    public function setBook(?Books $books): static
+    public function setBook(?Book $books): static
     {
         $this->books = $books;
 

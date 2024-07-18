@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,6 +14,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 #[Gedmo\Tree(type: 'nested')]
 #[ORM\Table(name: 'categories')]
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
+#[ApiResource]
 class Categories implements \Stringable
 {
     #[ORM\Id]
@@ -35,7 +37,7 @@ class Categories implements \Stringable
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Books::class)]
+    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'category')]
     private Collection $books;
 
     #[
@@ -182,7 +184,7 @@ class Categories implements \Stringable
         return $this->books;
     }
 
-    public function addBook(Books $books): self
+    public function addBook(Book $books): self
     {
         if (!$this->books->contains($books)) {
             $this->books[] = $books;
@@ -192,7 +194,7 @@ class Categories implements \Stringable
         return $this;
     }
 
-    public function removeBook(Books $books): self
+    public function removeBook(Book $books): self
     {
         // set the owning side to null (unless already changed)
         if ($this->books->removeElement($books) && $books->getCategory() === $this) {

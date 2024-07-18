@@ -4,27 +4,65 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\BooksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\Ignore;
+use Symfony\Component\Serializer\Attribute\SerializedName;
+
+use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
-class Books
+#[ORM\Table('books')]
+#[ApiResource(
+    description: 'Книги',
+    formats: [
+        'json',
+        'jsonld',
+        'jsonhal',
+        'csv' => 'text/csv'
+    ],
+    normalizationContext: [
+        'groups' => ['books:read'],
+    ],
+    denormalizationContext: [
+        'groups' => ['books:write'],
+    ],
+    paginationItemsPerPage: 25
+)]
+#[ApiFilter(
+    SearchFilter::class, properties: [
+        'id' => 'exact', 'name' => 'exact',
+        'category' => 'exact',
+    ]
+)]
+class Book
 {
     public $dispatch;
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
+    #[Groups('books:read')]
     private ?int $id = null;
 
+    #[ApiFilter(NumericFilter::class)]
+    #[Groups(['books:read', 'books:write'])]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $year = null;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['books:read', 'books:write'])]
     private ?string $image = null;
 
+    #[SerializedName('pdf')]
+    #[Groups(['books:read', 'books:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $file = null;
 
@@ -55,7 +93,8 @@ class Books
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $author = null;
 
-    #[ORM\OneToMany(mappedBy: 'books', targetEntity: Review::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'books', cascade: ['persist', 'remove'])]
     private Collection $review;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
@@ -73,10 +112,12 @@ class Books
     #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $pages = null;
 
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: Favorite::class, fetch: 'EXTRA_LAZY')]
+    #[Ignore]
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'books', fetch: 'EXTRA_LAZY')]
     private Collection $favorites;
 
-    #[ORM\OneToMany(mappedBy: 'book', targetEntity: UserBooksRead::class, cascade: ['persist', 'remove'])]
+    #[Ignore]
+    #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'books', cascade: ['persist', 'remove'])]
     private Collection $userBooksReads;
 
     public function __construct()
@@ -326,5 +367,11 @@ class Books
     public function getUserBooksReads(): Collection
     {
         return $this->userBooksReads;
+    }
+
+    #[Groups(['books:read'])]
+    public function getShortName(): \Symfony\Component\String\UnicodeString
+    {
+        return u($this->getName())->truncate(40, '...');
     }
 }
