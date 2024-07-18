@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\String\UnicodeString;
-
 use Symfony\Component\Validator\Constraints as Assert;
+
 use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
@@ -38,7 +38,7 @@ use function Symfony\Component\String\u;
         new GetCollection(),
         new Post(),
         new Delete(),
-        new Put()
+        new Put(),
     ],
     formats: [
         'json',
