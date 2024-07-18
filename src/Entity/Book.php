@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\Ignore;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Symfony\Component\String\UnicodeString;
 
 use function Symfony\Component\String\u;
 
@@ -26,7 +27,7 @@ use function Symfony\Component\String\u;
         'json',
         'jsonld',
         'jsonhal',
-        'csv' => 'text/csv'
+        'csv' => 'text/csv',
     ],
     normalizationContext: [
         'groups' => ['books:read'],
@@ -370,7 +371,7 @@ class Book
     }
 
     #[Groups(['books:read'])]
-    public function getShortName(): \Symfony\Component\String\UnicodeString
+    public function getShortName(): UnicodeString
     {
         return u($this->getName())->truncate(40, '...');
     }
