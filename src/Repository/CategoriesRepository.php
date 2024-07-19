@@ -4,23 +4,23 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Categories;
+use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 /**
- * @method Categories|null find($id, $lockMode = null, $lockVersion = null)
- * @method Categories|null findOneBy(array $criteria, array $orderBy = null)
- * @method Categories[]    findAll()
- * @method Categories[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Category|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Category|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Category[]    findAll()
+ * @method Category[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class CategoriesRepository extends NestedTreeRepository
 {
     public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($entityManager, $entityManager->getClassMetadata(Categories::class));
+        parent::__construct($entityManager, $entityManager->getClassMetadata(Category::class));
     }
 
     public function getMenu($value): Query
@@ -41,7 +41,7 @@ class CategoriesRepository extends NestedTreeRepository
         ;
     }
 
-    public function categoryByAlias(string $alias): ?Categories
+    public function categoryByAlias(string $alias): ?Category
     {
         return $this->findOneBy(['name_url' => $alias]);
     }

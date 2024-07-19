@@ -62,8 +62,6 @@ use function Symfony\Component\String\u;
 )]
 class Book
 {
-    public $dispatch;
-
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
@@ -71,23 +69,23 @@ class Book
     private ?int $id = null;
 
     #[ApiFilter(NumericFilter::class)]
-    #[Groups(['books:read', 'books:write'])]
+    #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $year = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Groups(['books:read', 'books:write'])]
+    #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     private ?string $image = null;
 
     #[SerializedName('pdf')]
-    #[Groups(['books:read', 'books:write'])]
+    #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $file = null;
 
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
 
-    #[Groups(['books:read', 'books:write'])]
+    #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
@@ -108,10 +106,11 @@ class Book
 
     #[Assert\Valid]
     #[Groups(['books:read', 'books:write'])]
-    #[ORM\ManyToOne(targetEntity: Categories::class, cascade: ['persist'], inversedBy: 'books')]
-    private ?Categories $category = null;
+    #[ORM\ManyToOne(targetEntity: Category::class, cascade: ['persist'], inversedBy: 'books')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Category $category = null;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $author = null;
 
     #[Ignore]
@@ -274,24 +273,12 @@ class Book
         return $this;
     }
 
-    public function getDispatch(): ?int
-    {
-        return $this->dispatch;
-    }
-
-    public function setDispatch(?int $dispatch): self
-    {
-        $this->dispatch = $dispatch;
-
-        return $this;
-    }
-
-    public function getCategory(): ?Categories
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategory(?Categories $categories): self
+    public function setCategory(?Category $categories): self
     {
         $this->category = $categories;
 

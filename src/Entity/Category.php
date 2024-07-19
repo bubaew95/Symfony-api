@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,22 +22,40 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Gedmo\Tree(type: 'nested')]
 #[ORM\Table(name: 'categories')]
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
-#[ApiResource]
-class Categories implements \Stringable
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: [
+                'groups' => ['category:read', 'category:item:read'],
+            ]
+        ),
+        new GetCollection(),
+        new Post(),
+        new Delete(),
+        new Put(),
+    ],
+    normalizationContext: [
+        'groups' => ['category:read'],
+    ],
+    denormalizationContext: [
+        'groups' => ['category:write'],
+    ]
+)]
+class Category implements \Stringable
 {
-    #[Groups(['book:item:read'])]
+    #[Groups(['book:item:read', 'category:read', 'category:write'])]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[Assert\NotBlank]
-    #[Groups(['book:item:read', 'books:write'])]
+    #[Groups(['book:item:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'string', length: 100)]
     private ?string $name = null;
 
     #[SerializedName('slug')]
-    #[Groups(['book:item:read', 'books:write'])]
+    #[Groups(['book:item:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'string', length: 150)]
     private ?string $name_url = null;
 
@@ -45,7 +68,8 @@ class Categories implements \Stringable
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $position = null;
 
-    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'category')]
+    #[Groups(['category:read', 'category:write'])]
+    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'category', cascade: ['persist'], orphanRemoval: true)]
     private Collection $books;
 
     #[
@@ -68,20 +92,20 @@ class Categories implements \Stringable
 
     #[
         Gedmo\TreeRoot,
-        ORM\ManyToOne(targetEntity: 'Categories'),
+        ORM\ManyToOne(targetEntity: 'Category'),
         ORM\JoinColumn(name: 'tree_root', referencedColumnName: 'id', onDelete: 'CASCADE')
     ]
-    private ?Categories $root = null;
+    private ?Category $root = null;
 
     #[
         Gedmo\TreeParent,
-        ORM\ManyToOne(targetEntity: 'Categories', inversedBy: 'children'),
+        ORM\ManyToOne(targetEntity: 'Category', inversedBy: 'children'),
         ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')
     ]
-    private ?Categories $parent = null;
+    private ?Category $parent = null;
 
     #[
-        ORM\OneToMany(mappedBy: 'parent', targetEntity: 'Categories'),
+        ORM\OneToMany(targetEntity: 'Category', mappedBy: 'parent'),
         ORM\OrderBy(['lft' => 'ASC'])
     ]
     private Collection $children;
@@ -100,12 +124,12 @@ class Categories implements \Stringable
         return $this->root;
     }
 
-    public function setParent(?Categories $categories): void
+    public function setParent(?Category $categories): void
     {
         $this->parent = $categories;
     }
 
-    public function getParent(): ?Categories
+    public function getParent(): ?Category
     {
         return $this->parent;
     }
