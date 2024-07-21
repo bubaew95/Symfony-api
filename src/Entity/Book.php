@@ -43,7 +43,7 @@ use function Symfony\Component\String\u;
             ]
         ),
         new GetCollection(),
-        new Post(),
+        new Post(security: 'is_granted("ROLE_BOOK_CREATE")'),
         new Put(),
     ],
     formats: ['json', 'jsonld', 'jsonhal', 'csv' => 'text/csv'],

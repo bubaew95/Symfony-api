@@ -5,7 +5,7 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
 
     role_hierarchy:
-        ROLE_FULL_USER: [ ROLE_USER_EDIT, ROLE_TREASURE_CREATE, ROLE_TREASURE_EDIT ]
+        ROLE_FULL_USER: [ ROLE_USER_EDIT, ROLE_BOOK_CREATE, ROLE_BOOK_EDIT ]
 
     providers:
         users_in_memory: { memory: null }
