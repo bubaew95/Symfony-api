@@ -26,20 +26,20 @@ use Symfony\Component\Validator\Constraints as Assert;
         message: 'Такой емайл уже зарегистрирован'
     )
 ]
-#[ApiResource(
-    operations: [
-        new Get(),
-        new GetCollection(),
-        new Post(),
-        new Delete(),
-    ],
-    normalizationContext: [
-        'groups' => ['user:read'],
-    ],
-    denormalizationContext: [
-        'groups' => ['user:write'],
-    ]
-)]
+// #[ApiResource(
+//    operations: [
+//        new Get(),
+//        new GetCollection(),
+//        new Post(),
+//        new Delete(),
+//    ],
+//    normalizationContext: [
+//        'groups' => ['user:read'],
+//    ],
+//    denormalizationContext: [
+//        'groups' => ['user:write'],
+//    ]
+// )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const STATUS_PASSWORD_UPDATE = 'password_update';
@@ -49,6 +49,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public const STATUS_DEACTIVATED = 'deactivated';
 
     public const STATUS_BAN = 'ban';
+
+    private ?array $accessTokenScopes = null;
 
     public const STATUSES = [
         self::STATUS_PASSWORD_UPDATE => [
@@ -157,12 +159,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 60)]
     private ?string $last_name = null;
 
+    #[ORM\OneToMany(targetEntity: ApiToken::class, mappedBy: 'userBy')]
+    private Collection $apiTokens;
+
     public function __construct()
     {
         $this->review = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->userBooksReads = new ArrayCollection();
         $this->date = new \DateTime();
+        $this->apiTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -197,10 +203,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        if(null === $this->accessTokenScopes) {
+            $roles = $this->roles;
+            $roles[] = 'ROLE_FULL_USER';
+        } else {
+            $roles = $this->accessTokenScopes;
+        }
 
+        $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
 
@@ -475,5 +485,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->last_name = $last_name;
 
         return $this;
+    }
+
+    public function getApiTokens(): Collection
+    {
+        return $this->apiTokens;
+    }
+
+    public function addApiToken(ApiToken $apiToken): self
+    {
+        if (!$this->apiTokens->contains($apiToken)) {
+            $this->apiTokens->add($apiToken);
+            $apiToken->setUserBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApiToken(ApiToken $apiToken): self
+    {
+        if ($this->apiTokens->removeElement($apiToken)) {
+            if ($apiToken->getUserBy() === $this) {
+                $apiToken->setUserBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getValidTokenStrings(): array
+    {
+        return $this->getApiTokens()
+            ->filter(fn (ApiToken $token) => $token->isValid())
+            ->map(fn (ApiToken $token) => $token->getToken())
+            ->toArray()
+        ;
+    }
+
+    public function markAsTokenAuthenticated(array $scopes): void
+    {
+        $this->accessTokenScopes = $scopes;
     }
 }

@@ -8,9 +8,9 @@ use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\BooksRepository;
@@ -27,7 +27,14 @@ use function Symfony\Component\String\u;
 
 #[ORM\Entity(repositoryClass: BooksRepository::class)]
 #[ORM\Table('books')]
+#[ApiFilter(
+    SearchFilter::class, properties: [
+        'id' => 'exact', 'name' => 'exact',
+        'category.name' => 'exact',
+    ]
+)]
 #[ApiResource(
+    shortName: 'Book',
     description: 'Книги',
     operations: [
         new Get(
@@ -37,28 +44,24 @@ use function Symfony\Component\String\u;
         ),
         new GetCollection(),
         new Post(),
-        new Delete(),
         new Put(),
     ],
-    formats: [
-        'json',
-        'jsonld',
-        'jsonhal',
-        'csv' => 'text/csv',
-    ],
-    normalizationContext: [
-        'groups' => ['books:read'],
-    ],
-    denormalizationContext: [
-        'groups' => ['books:write'],
-    ],
+    formats: ['json', 'jsonld', 'jsonhal', 'csv' => 'text/csv'],
+    normalizationContext: ['groups' => ['books:read']],
+    denormalizationContext: ['groups' => ['books:write']],
     paginationItemsPerPage: 25
 )]
-#[ApiFilter(
-    SearchFilter::class, properties: [
-        'id' => 'exact', 'name' => 'exact',
-        'category' => 'exact',
-    ]
+#[ApiResource(
+    uriTemplate: '/category/{category_id}/books.{_format}',
+    shortName: 'Book',
+    operations: [new GetCollection()],
+    uriVariables: [
+        'category_id' => new Link(
+            fromProperty: 'books',
+            fromClass: Category::class
+        ),
+    ],
+    normalizationContext: ['groups' => ['books:read']]
 )]
 class Book
 {
@@ -68,7 +71,7 @@ class Book
     #[Groups('books:read')]
     private ?int $id = null;
 
-    #[ApiFilter(NumericFilter::class)]
+    #[ApiFilter(NumericFilter::class, strategy: 'exact')]
     #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $year = null;
@@ -104,6 +107,7 @@ class Book
     #[ORM\Column(type: 'smallint', nullable: true)]
     private ?int $recomented = null;
 
+    #[ApiFilter(SearchFilter::class, strategy: 'exact')]
     #[Assert\Valid]
     #[Groups(['books:read', 'books:write'])]
     #[ORM\ManyToOne(targetEntity: Category::class, cascade: ['persist'], inversedBy: 'books')]
@@ -136,7 +140,6 @@ class Book
     private Collection $favorites;
 
     #[SerializedName('readBooks')]
-    #[Groups(['books:read', 'books:write'])]
     #[ORM\JoinColumn(nullable: true)]
     #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'book', cascade: ['persist', 'remove'])]
     private Collection $userBooksReads;
