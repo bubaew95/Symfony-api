@@ -100,6 +100,6 @@ class ApiToken
 
     public function isValid(): bool
     {
-        return $this->expiresAt === null || $this->expiresAt > new \DateTimeImmutable();
+        return !$this->expiresAt instanceof \DateTimeImmutable || $this->expiresAt > new \DateTimeImmutable();
     }
 }

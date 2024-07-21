@@ -13,10 +13,8 @@ class AppFixtures extends Fixture
     {
         UserFactory::createMany(2);
 
-        ApiTokenFactory::createMany(2, function () {
-            return [
-                'userBy' => UserFactory::random(),
-            ];
-        });
+        ApiTokenFactory::createMany(2, fn (): array => [
+            'userBy' => UserFactory::random(),
+        ]);
     }
 }

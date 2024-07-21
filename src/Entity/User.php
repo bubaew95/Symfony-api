@@ -203,7 +203,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        if(null === $this->accessTokenScopes) {
+        if (null === $this->accessTokenScopes) {
             $roles = $this->roles;
             $roles[] = 'ROLE_FULL_USER';
         } else {
@@ -211,6 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $roles[] = 'ROLE_USER';
+
         return array_unique($roles);
     }
 
@@ -504,10 +505,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeApiToken(ApiToken $apiToken): self
     {
-        if ($this->apiTokens->removeElement($apiToken)) {
-            if ($apiToken->getUserBy() === $this) {
-                $apiToken->setUserBy(null);
-            }
+        if ($this->apiTokens->removeElement($apiToken) && $apiToken->getUserBy() === $this) {
+            $apiToken->setUserBy(null);
         }
 
         return $this;
@@ -516,8 +515,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getValidTokenStrings(): array
     {
         return $this->getApiTokens()
-            ->filter(fn (ApiToken $token) => $token->isValid())
-            ->map(fn (ApiToken $token) => $token->getToken())
+            ->filter(fn (ApiToken $token): bool => $token->isValid())
+            ->map(fn (ApiToken $token): ?string => $token->getToken())
             ->toArray()
         ;
     }

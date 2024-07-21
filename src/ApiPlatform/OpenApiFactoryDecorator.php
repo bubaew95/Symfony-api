@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 #[AsDecorator('api_platform.openapi.factory')]
 class OpenApiFactoryDecorator implements OpenApiFactoryInterface
 {
-    public function __construct(private OpenApiFactoryInterface $decorated)
+    public function __construct(private readonly OpenApiFactoryInterface $decorated)
     {
     }
 
