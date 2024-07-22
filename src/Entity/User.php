@@ -574,6 +574,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastSurName(?string $last_sur_name): static
     {
         $this->last_sur_name = $last_sur_name;
+
         return $this;
     }
 }

@@ -11,7 +11,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
  */
 final class UserFactory extends PersistentProxyObjectFactory
 {
-    public function __construct(private UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
     {
         parent::__construct();
     }
@@ -34,7 +34,6 @@ final class UserFactory extends PersistentProxyObjectFactory
             'roles' => ['ROLE_ADMIN'],
         ];
     }
-
 
     protected function initialize(): static
     {
