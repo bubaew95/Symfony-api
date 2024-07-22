@@ -8,7 +8,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,20 +28,23 @@ use Symfony\Component\Validator\Constraints as Assert;
         message: 'Такой емайл уже зарегистрирован'
     )
 ]
-// #[ApiResource(
-//    operations: [
-//        new Get(),
-//        new GetCollection(),
-//        new Post(),
-//        new Delete(),
-//    ],
-//    normalizationContext: [
-//        'groups' => ['user:read'],
-//    ],
-//    denormalizationContext: [
-//        'groups' => ['user:write'],
-//    ]
-// )]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(security: 'is_granted("PUBLIC_ACCESS")'),
+        new Put(security: 'is_granted("ROLE_USER_EDIT")'),
+        new Patch(security: 'is_granted("ROLE_USER_EDIT")'),
+        new Delete(),
+    ],
+    normalizationContext: [
+        'groups' => ['user:read'],
+    ],
+    denormalizationContext: [
+        'groups' => ['user:write'],
+    ],
+    security: 'is_granted("ROLE_USER")',
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const STATUS_PASSWORD_UPDATE = 'password_update';
@@ -162,6 +167,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ApiToken::class, mappedBy: 'userBy')]
     private Collection $apiTokens;
 
+    /**
+     * @var Collection<int, Book>
+     */
+    #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'user')]
+    private Collection $books;
+
     public function __construct()
     {
         $this->review = new ArrayCollection();
@@ -169,6 +180,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userBooksReads = new ArrayCollection();
         $this->date = new \DateTime();
         $this->apiTokens = new ArrayCollection();
+        $this->books = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -524,5 +536,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function markAsTokenAuthenticated(array $scopes): void
     {
         $this->accessTokenScopes = $scopes;
+    }
+
+    /**
+     * @return Collection<int, Book>
+     */
+    public function getBooks(): Collection
+    {
+        return $this->books;
+    }
+
+    public function addBook(Book $book): static
+    {
+        if (!$this->books->contains($book)) {
+            $this->books->add($book);
+            $book->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBook(Book $book): static
+    {
+        if ($this->books->removeElement($book)) {
+            // set the owning side to null (unless already changed)
+            if ($book->getUser() === $this) {
+                $book->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -25,7 +25,7 @@ final class Version20231012173054 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE books ADD dispatch SMALLINT DEFAULT NULL');
+        $this->addSql('ALTER TABLE books ADD publisher');
         $this->addSql('ALTER TABLE books DROP isbn');
     }
 }

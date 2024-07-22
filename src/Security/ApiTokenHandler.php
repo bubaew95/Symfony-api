@@ -8,9 +8,9 @@ use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationExc
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 
-class ApiTokenHandler implements AccessTokenHandlerInterface
+readonly class ApiTokenHandler implements AccessTokenHandlerInterface
 {
-    public function __construct(private readonly ApiTokenRepository $apiTokenRepository)
+    public function __construct(private ApiTokenRepository $apiTokenRepository)
     {
     }
 

@@ -8,9 +8,11 @@ use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\BooksRepository;
@@ -44,24 +46,28 @@ use function Symfony\Component\String\u;
         ),
         new GetCollection(),
         new Post(security: 'is_granted("ROLE_BOOK_CREATE")'),
-        new Put(),
+        new Put(security: 'is_granted("ROLE_BOOK_EDIT")'),
+        new Patch(security: 'is_granted("ROLE_BOOK_EDIT")'),
+        new Delete(security: 'is_granted("ROLE_ADMIN")'),
     ],
     formats: ['json', 'jsonld', 'jsonhal', 'csv' => 'text/csv'],
     normalizationContext: ['groups' => ['books:read']],
     denormalizationContext: ['groups' => ['books:write']],
-    paginationItemsPerPage: 25
+    paginationItemsPerPage: 25,
+    security: 'is_granted("ROLE_USER")'
 )]
 #[ApiResource(
-    uriTemplate: '/category/{category_id}/books.{_format}',
+    uriTemplate: '/user/{user_id}/books.{_format}',
     shortName: 'Book',
     operations: [new GetCollection()],
     uriVariables: [
-        'category_id' => new Link(
+        'user_id' => new Link(
             fromProperty: 'books',
-            fromClass: Category::class
+            fromClass: User::class
         ),
     ],
-    normalizationContext: ['groups' => ['books:read']]
+    normalizationContext: ['groups' => ['books:read']],
+    security: 'is_granted("ROLE_USER")'
 )]
 class Book
 {
@@ -143,6 +149,10 @@ class Book
     #[ORM\JoinColumn(nullable: true)]
     #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'book', cascade: ['persist', 'remove'])]
     private Collection $userBooksReads;
+
+    #[Groups(['books:read', 'books:write', 'user:read', 'user:write'])]
+    #[ORM\ManyToOne(inversedBy: 'books')]
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -385,5 +395,17 @@ class Book
     public function getShortName(): UnicodeString
     {
         return u($this->getName())->truncate(40, '...');
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }
