@@ -7,7 +7,7 @@ services:
       MARIADB_DATABASE: ${POSTGRES_DB:-library}
       MARIADB_ROOT_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
       MARIADB_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
-      MARIADB_USER: ${POSTGRES_USER:-app}
+#      MARIADB_USER: ${POSTGRES_USER:-app}
     volumes:
       - database_data:/var/lib/mariadb/data:rw
   adminer:

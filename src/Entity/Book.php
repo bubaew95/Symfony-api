@@ -54,7 +54,7 @@ use function Symfony\Component\String\u;
     normalizationContext: ['groups' => ['books:read']],
     denormalizationContext: ['groups' => ['books:write']],
     paginationItemsPerPage: 25,
-    security: 'is_granted("ROLE_USER")'
+//    security: 'is_granted("ROLE_USER")'
 )]
 #[ApiResource(
     uriTemplate: '/user/{user_id}/books.{_format}',
