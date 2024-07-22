@@ -558,11 +558,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeBook(Book $book): static
     {
-        if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
-            if ($book->getUser() === $this) {
-                $book->setUser(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->books->removeElement($book) && $book->getUser() === $this) {
+            $book->setUser(null);
         }
 
         return $this;
