@@ -4,9 +4,9 @@ api_platform:
     use_symfony_listeners: true
     formats:
         jsonld: ['application/ld+json']
+        jsonhal: [ 'application/hal+json' ]
         json: [ 'application/json' ]
         html: [ 'text/html' ]
-        jsonhal: [ 'application/hal+json' ]
     swagger:
         api_keys:
             access_token:
@@ -20,3 +20,6 @@ when@prod:
         enable_entrypoint: false
         enable_swagger: false
         enable_swagger_ui: false
+
+    doctrine:
+        keep_legacy_inflector: false
