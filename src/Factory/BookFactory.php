@@ -23,10 +23,11 @@ final class BookFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'file' => self::faker()->text(255),
-            'image' => self::faker()->text(255),
-            'name' => self::faker()->text(255),
+            'file' => 'file.pdf',
+            'image' => 'image.png',
+            'name' => self::faker()->text(50),
             'user' => UserFactory::new(),
+            'visible' => self::faker()->boolean(),
         ];
     }
 

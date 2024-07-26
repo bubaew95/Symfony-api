@@ -7,6 +7,7 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -14,7 +15,6 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\BooksRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -46,14 +46,19 @@ use function Symfony\Component\String\u;
         ),
         new GetCollection(),
         new Post(security: 'is_granted("ROLE_BOOK_CREATE")'),
-        new Put(security: 'is_granted("ROLE_BOOK_EDIT")'),
-        new Patch(security: 'is_granted("ROLE_BOOK_EDIT")'),
+        new Patch(
+            security: 'is_granted("EDIT", object)',
+            securityPostDenormalize: 'is_granted("EDIT", object)'
+        ),
         new Delete(security: 'is_granted("ROLE_ADMIN")'),
     ],
     formats: ['json', 'jsonld', 'jsonhal', 'csv' => 'text/csv'],
     normalizationContext: ['groups' => ['books:read']],
     denormalizationContext: ['groups' => ['books:write']],
     paginationItemsPerPage: 25,
+    extraProperties: [
+        'standard_put' => true,
+    ]
     //    security: 'is_granted("ROLE_USER")'
 )]
 #[ApiResource(
@@ -67,7 +72,7 @@ use function Symfony\Component\String\u;
         ),
     ],
     normalizationContext: ['groups' => ['books:read']],
-    security: 'is_granted("ROLE_USER")'
+    //    security: 'is_granted("ROLE_USER")'
 )]
 class Book
 {
@@ -77,23 +82,29 @@ class Book
     #[Groups('books:read')]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
     #[ApiFilter(NumericFilter::class, strategy: 'exact')]
     #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $year = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
     #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $image = null;
 
+    #[Assert\NotBlank]
     #[SerializedName('pdf')]
     #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $file = null;
 
+    #[ApiProperty(security: 'is_granted("EDIT", object)')]
+    #[Groups(['books:read', 'books:write'])]
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
 
+    #[Assert\NotBlank]
     #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
