@@ -18,7 +18,7 @@ class BookVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT]) && $subject instanceof Book;
+        return self::EDIT === $attribute && $subject instanceof Book;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -34,16 +34,13 @@ class BookVoter extends Voter
             return true;
         }
 
-        switch ($attribute) {
-            case self::EDIT:
-                if (!$this->security->isGranted('ROLE_BOOK_EDIT')) {
-                    return false;
-                }
-
-                if ($subject->getUser() === $user) {
-                    return true;
-                }
-                break;
+        if (self::EDIT === $attribute) {
+            if (!$this->security->isGranted('ROLE_BOOK_EDIT')) {
+                return false;
+            }
+            if ($subject->getUser() === $user) {
+                return true;
+            }
         }
 
         return false;

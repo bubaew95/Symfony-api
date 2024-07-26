@@ -19,7 +19,7 @@ class SecurityController extends AbstractController
             ], 401);
         }
 
-        return new Response(null, 204, [
+        return new Response(null, Response::HTTP_NO_CONTENT, [
             'Location' => $iriConverter->getIriFromResource($user),
         ]);
     }
