@@ -29,4 +29,10 @@ class SecurityController extends AbstractController
     {
         throw new \Exception('This should never be reached!');
     }
+
+    #[Route('/test')]
+    public function test()
+    {
+        dd('test');
+    }
 }

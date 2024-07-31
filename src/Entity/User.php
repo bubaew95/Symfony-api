@@ -19,6 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[
@@ -32,7 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(security: 'is_granted("PUBLIC_ACCESS")'),
+        new Post(security: 'is_granted("PUBLIC_ACCESS")', validationContext: ['groups' => ['Default', 'postValidation']]),
         new Put(security: 'is_granted("ROLE_USER_EDIT")'),
         new Patch(security: 'is_granted("ROLE_USER_EDIT")'),
         new Delete(),
@@ -92,7 +93,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    #[Groups(['user:write'])]
     #[ORM\Column(type: 'string')]
     private string $password;
 
@@ -128,9 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?string $isSubscribe = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $last_sur_name = null;
-
     #[ORM\Column(type: 'string', length: 25, nullable: true)]
     private ?string $status = null;
 
@@ -143,10 +140,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user')]
     private Collection $review;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Favorite::class)]
+    #[ORM\OneToMany(targetEntity: Favorite::class, mappedBy: 'user')]
     private Collection $favorites;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserBooksRead::class)]
+    #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'user')]
     private Collection $userBooksReads;
 
     #[Groups(['user:read', 'user:write'])]
@@ -172,6 +169,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'user')]
     private Collection $books;
+
+    #[Assert\NotBlank(groups: ['postValidation'])]
+    #[Groups(['user:write'])]
+    #[SerializedName('password')]
+    private ?string $plainPassword = null;
 
     public function __construct()
     {
@@ -255,7 +257,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getPhone(): ?string
@@ -566,14 +568,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getLastSurName(): ?string
+    public function getPlainPassword(): ?string
     {
-        return $this->last_sur_name;
+        return $this->plainPassword;
     }
 
-    public function setLastSurName(?string $last_sur_name): static
+    public function setPlainPassword(?string $plainPassword): static
     {
-        $this->last_sur_name = $last_sur_name;
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
