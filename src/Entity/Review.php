@@ -26,10 +26,10 @@ class Review
     #[ORM\Column(type: 'text', nullable: false)]
     private string $text;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $rating = null;
 
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'reviews')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'review')]
     private Collection $parent;
 
     #[ORM\ManyToOne(targetEntity: Review::class, inversedBy: 'parent')]
@@ -96,12 +96,12 @@ class Review
         return $this->parent;
     }
 
-    public function getReviews(): ?Review
+    public function getReview(): ?Review
     {
         return $this->review;
     }
 
-    public function setReviews(?Review $review): self
+    public function setReview(?Review $review): self
     {
         $this->review = $review;
 

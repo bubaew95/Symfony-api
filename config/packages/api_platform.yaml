@@ -15,6 +15,7 @@ api_platform:
             access_token:
                 name: Authorization
                 type: header
+    keep_legacy_inflector: false
 
 when@prod:
     api_platform:
@@ -24,4 +25,3 @@ when@prod:
         enable_swagger_ui: false
 
     doctrine:
-        keep_legacy_inflector: false

@@ -44,7 +44,7 @@ class UserResourceTest extends ApiTestCase
                     'password' => 'password',
                 ],
             ])
-            ->patch('/api/users/' . $user->getId(), [
+            ->patch('/api/users/'.$user->getId(), [
                 'headers' => ['Content-Type' => 'application/merge-patch+json'],
                 'json' => [
                     'email' => 'test-4@mail.ru',

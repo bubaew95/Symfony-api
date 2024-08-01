@@ -27,6 +27,7 @@ final class BookFactory extends PersistentProxyObjectFactory
             'image' => 'image.png',
             'name' => self::faker()->text(50),
             'user' => UserFactory::new(),
+            'year' => self::faker()->numberBetween(1000, 2024),
             'visible' => self::faker()->boolean(),
         ];
     }

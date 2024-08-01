@@ -31,7 +31,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/test')]
-    public function test()
+    public function test(): never
     {
         dd('test');
     }

@@ -126,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $home_address = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?string $isSubscribe = null;
+    private bool $isSubscribe = false;
 
     #[ORM\Column(type: 'string', length: 25, nullable: true)]
     private ?string $status = null;

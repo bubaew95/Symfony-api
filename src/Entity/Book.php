@@ -99,8 +99,8 @@ class Book
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $file = null;
 
-    #[ApiProperty(security: 'is_granted("EDIT", object)')]
-    #[Groups(['books:read', 'books:write'])]
+//    #[ApiProperty(security: 'is_granted("EDIT", object)')]
+    #[Groups(['admin:read', 'admin:write'])]
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
 
