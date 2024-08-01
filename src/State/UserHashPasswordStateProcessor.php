@@ -17,12 +17,12 @@ class UserHashPasswordStateProcessor implements ProcessorInterface
     ) {
     }
 
-    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
+    public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         if ($data instanceof User && $data->getPlainPassword()) {
             $data->setPassword($this->passwordHasher->hashPassword($data, $data->getPlainPassword()));
         }
 
-        $this->innerProcessor->process($data, $operation, $uriVariables, $context);
+        return $this->innerProcessor->process($data, $operation, $uriVariables, $context);
     }
 }

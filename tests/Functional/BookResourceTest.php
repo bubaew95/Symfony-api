@@ -100,7 +100,7 @@ class BookResourceTest extends ApiTestCase
                 ],
             ])
             ->assertStatus(200)
-//            ->assertJsonMatches('year', 1234)
+            ->assertJsonMatches('year', 1234)
         ;
 
         $user2 = UserFactory::createOne(['password' => 'password']);
@@ -155,14 +155,14 @@ class BookResourceTest extends ApiTestCase
                 ],
             ])
             ->assertStatus(200)
-//            ->assertJsonMatches('year', 1234)
-//            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('year', 1234)
+            ->assertJsonMatches('visible', false)
         ;
     }
 
     public function testAdminCanSeeVisibleField(): void
     {
-        $user = UserFactory::createOne(['password' => 'password']);
+        $user = UserFactory::createOne(['password' => 'password', 'roles' => ['ROLE_ADMIN']]);
         $book = BookFactory::createOne([
             'visible' => false,
             'user' => $user,
@@ -181,8 +181,34 @@ class BookResourceTest extends ApiTestCase
                 ],
             ])
             ->assertStatus(200)
-//            ->assertJsonMatches('year', 1234)
-//            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('year', 1234)
+            ->assertJsonMatches('visible', false)
+        ;
+    }
+
+    public function testUserCanSeeVisibleField(): void
+    {
+        $user = UserFactory::createOne(['password' => 'password']);
+        $book = BookFactory::createOne([
+            'visible' => false,
+            'user' => $user,
+        ]);
+
+        $this->browser()
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
+            ->post('/api/books/'.$book->getId(), [
+                'json' => [
+                    'year' => 1234,
+                ],
+            ])
+            ->assertStatus(200)
+            ->assertJsonMatches('year', 1234)
+            ->assertJsonMatches('visible', false)
         ;
     }
 }

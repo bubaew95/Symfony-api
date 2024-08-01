@@ -23,5 +23,3 @@ when@prod:
         enable_entrypoint: false
         enable_swagger: false
         enable_swagger_ui: false
-
-    doctrine:

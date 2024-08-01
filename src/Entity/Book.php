@@ -45,7 +45,10 @@ use function Symfony\Component\String\u;
             ]
         ),
         new GetCollection(),
-        new Post(security: 'is_granted("ROLE_BOOK_CREATE")'),
+        new Post(security: 'is_granted("ROLE_BOOK_CREATE")',
+            normalizationContext: ['groups' => ['books:read']],
+            denormalizationContext: ['groups' => ['books:write']]
+        ),
         new Patch(
             security: 'is_granted("EDIT", object)',
             securityPostDenormalize: 'is_granted("EDIT", object)'
@@ -55,10 +58,7 @@ use function Symfony\Component\String\u;
     formats: ['json', 'jsonld', 'jsonhal', 'csv' => 'text/csv'],
     normalizationContext: ['groups' => ['books:read']],
     denormalizationContext: ['groups' => ['books:write']],
-    paginationItemsPerPage: 25,
-    extraProperties: [
-        'standard_put' => true,
-    ]
+    paginationItemsPerPage: 25
     //    security: 'is_granted("ROLE_USER")'
 )]
 #[ApiResource(
@@ -79,7 +79,7 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    #[Groups('books:read')]
+    #[Groups(['books:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank]
@@ -99,8 +99,8 @@ class Book
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $file = null;
 
-//    #[ApiProperty(security: 'is_granted("EDIT", object)')]
-    #[Groups(['admin:read', 'admin:write'])]
+    //    #[ApiProperty(security: 'is_granted("EDIT", object)')]
+    #[Groups(['admin:read', 'admin:write', 'user:read'])]
     #[ORM\Column(nullable: true)]
     private ?bool $visible = null;
 
