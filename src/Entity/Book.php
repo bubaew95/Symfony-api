@@ -80,7 +80,7 @@ class Book
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['books:read'])]
+    #[Groups(['books:read', 'user:read'])]
     private ?int $id = null;
 
     #[Assert\NotBlank]
@@ -164,7 +164,7 @@ class Book
 
     #[IsValidUser]
     #[Assert\NotNull]
-    #[Groups(['books:read', 'books:write', 'user:read', 'user:write'])]
+    #[Groups(['books:read', 'books:write', 'user:read'])]
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?User $user = null;
 

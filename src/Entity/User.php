@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
+use App\Validator\BooksAllowedUserChange;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -34,7 +35,6 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(),
         new GetCollection(),
         new Post(security: 'is_granted("PUBLIC_ACCESS")', validationContext: ['groups' => ['Default', 'postValidation']]),
-        new Put(security: 'is_granted("ROLE_USER_EDIT")'),
         new Patch(security: 'is_granted("ROLE_USER_EDIT")'),
         new Delete(),
     ],
@@ -126,7 +126,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $home_address = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private bool $isSubscribe = false;
+    private ?bool $isSubscribe = false;
 
     #[ORM\Column(type: 'string', length: 25, nullable: true)]
     private ?string $status = null;
@@ -164,9 +164,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: ApiToken::class, mappedBy: 'userBy')]
     private Collection $apiTokens;
 
-    /**
-     * @var Collection<int, Book>
-     */
+    #[BooksAllowedUserChange]
+    #[Groups(['user:write'])]
+    #[Assert\Valid]
     #[ORM\OneToMany(targetEntity: Book::class, mappedBy: 'user')]
     private Collection $books;
 

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional;
 
+use App\Factory\BookFactory;
 use App\Factory\UserFactory;
 use Zenstruck\Foundry\Test\ResetDatabase;
 
@@ -51,6 +52,32 @@ class UserResourceTest extends ApiTestCase
                 ],
             ])
             ->assertStatus(200)
+        ;
+    }
+
+    public function testBooksCannotBeStolen(): void
+    {
+        $user = UserFactory::createOne(['password' => 'password']);
+        $otherUser = UserFactory::createOne();
+        $book = BookFactory::createOne(['user' => $otherUser]);
+
+        $this->browser()
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
+            ->patch('/api/users/'.$user->getId(), [
+                'headers' => ['Content-Type' => 'application/merge-patch+json'],
+                'json' => [
+                    'email' => 'test-4@mail.ru',
+                    'books' => [
+                        '/api/books/'.$book->getId(),
+                    ],
+                ],
+            ])
+            ->assertStatus(422)
         ;
     }
 }
