@@ -16,6 +16,7 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Repository\BooksRepository;
+use App\Validator\IsValidUser;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -45,13 +46,13 @@ use function Symfony\Component\String\u;
             ]
         ),
         new GetCollection(),
-        new Post(security: 'is_granted("ROLE_BOOK_CREATE")',
-            normalizationContext: ['groups' => ['books:read']],
-            denormalizationContext: ['groups' => ['books:write']]
+        new Post(normalizationContext: ['groups' => ['books:read']],
+            denormalizationContext: ['groups' => ['books:write']],
+            security: 'is_granted("ROLE_BOOK_CREATE")'
         ),
         new Patch(
             security: 'is_granted("EDIT", object)',
-            securityPostDenormalize: 'is_granted("EDIT", object)'
+//            securityPostDenormalize: 'is_granted("EDIT", object)'
         ),
         new Delete(security: 'is_granted("ROLE_ADMIN")'),
     ],
@@ -161,6 +162,8 @@ class Book
     #[ORM\OneToMany(targetEntity: UserBooksRead::class, mappedBy: 'book', cascade: ['persist', 'remove'])]
     private Collection $userBooksReads;
 
+    #[IsValidUser]
+    #[Assert\NotNull]
     #[Groups(['books:read', 'books:write', 'user:read', 'user:write'])]
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?User $user = null;

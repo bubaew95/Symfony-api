@@ -133,6 +133,21 @@ class BookResourceTest extends ApiTestCase
             ])
             ->assertStatus(403)
         ;
+
+        $this->browser()
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
+            ->patch('/api/books/'.$book->getId(), [
+                'json' => [
+                    'user' => '/api/users/'.$user2->getId(),
+                ],
+            ])
+            ->assertStatus(422)
+        ;
     }
 
     public function testAdminCanPatchToEditBook(): void
@@ -201,7 +216,7 @@ class BookResourceTest extends ApiTestCase
                     'password' => 'password',
                 ],
             ])
-            ->post('/api/books/'.$book->getId(), [
+            ->patch('/api/books/'.$book->getId(), [
                 'json' => [
                     'year' => 1234,
                 ],
@@ -209,6 +224,33 @@ class BookResourceTest extends ApiTestCase
             ->assertStatus(200)
             ->assertJsonMatches('year', 1234)
             ->assertJsonMatches('visible', false)
+        ;
+    }
+
+    public function testUserCanSeeVisibleAndIsMineFields(): void
+    {
+        $user = UserFactory::createOne(['password' => 'password']);
+        $book = BookFactory::createOne([
+            'visible' => false,
+            'user' => $user,
+        ]);
+
+        $this->browser()
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
+            ->patch('/api/books/'.$book->getId(), [
+                'json' => [
+                    'year' => 1234,
+                ],
+            ])
+            ->assertStatus(200)
+            ->assertJsonMatches('year', 1234)
+            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('isMine', true)
         ;
     }
 }
