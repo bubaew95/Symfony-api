@@ -122,7 +122,7 @@ class BookResourceTest extends ApiTestCase
         $this->browser()
             ->post('/login', options: [
                 'json' => [
-                    'email' => $user->getEmail(),
+                    'email' => $user2->getEmail(),
                     'password' => 'password',
                 ],
             ])
@@ -154,7 +154,7 @@ class BookResourceTest extends ApiTestCase
     {
         $admin = UserFactory::createOne(['roles' => ['ROLE_ADMIN'], 'password' => 'password']);
         $book = BookFactory::createOne([
-            'visible' => false,
+            'visible' => true,
         ]);
 
         $this->browser()
@@ -171,7 +171,7 @@ class BookResourceTest extends ApiTestCase
             ])
             ->assertStatus(200)
             ->assertJsonMatches('year', 1234)
-            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('visible', true)
         ;
     }
 
