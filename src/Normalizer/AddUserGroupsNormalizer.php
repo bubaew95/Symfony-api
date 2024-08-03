@@ -14,7 +14,7 @@ class AddUserGroupsNormalizer implements NormalizerInterface, SerializerAwareInt
 {
     public function __construct(
         private readonly NormalizerInterface $normalizer,
-        private Security $security
+        private readonly Security $security
     ) {
     }
 
