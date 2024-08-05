@@ -2,6 +2,7 @@
 
 namespace App\ApiPlatform;
 
+use ArrayObject;
 use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 use ApiPlatform\OpenApi\Model\SecurityScheme;
 use ApiPlatform\OpenApi\OpenApi;
@@ -18,7 +19,7 @@ class OpenApiFactoryDecorator implements OpenApiFactoryInterface
     {
         $openApi = $this->decorated->__invoke($context);
 
-        $securitySchemes = $openApi->getComponents()->getSecuritySchemes() ?: new \ArrayObject();
+        $securitySchemes = $openApi->getComponents()->getSecuritySchemes() ?: new ArrayObject();
         $securitySchemes['access_token'] = new SecurityScheme(
             type: 'http',
             scheme: 'bearer'

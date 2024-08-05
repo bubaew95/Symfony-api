@@ -26,10 +26,15 @@ class BooksAllowedUserChangeValidator extends ConstraintValidator
         foreach ($value as $book) {
             /** @var Book $book */
             $originData = $unitOfWork->getOriginalEntityData($book);
-            dd($book, $originData);
-        }
+            $originUserId = $originData['user_id'];
+            $newUserId = $book->getUser()->getId();
 
-        $this->context->buildViolation($constraint->message)
-            ->addViolation();
+            if (!$originUserId || $originUserId === $newUserId) {
+                return;
+            }
+
+            $this->context->buildViolation($constraint->message)
+                ->addViolation();
+        }
     }
 }

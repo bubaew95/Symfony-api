@@ -34,17 +34,31 @@ class BookResourceTest extends ApiTestCase
         ]);
     }
 
-    // TODO:: Не работает
-    public function _testPostToCreateBook(): void
+    public function testPostToCreateBook(): void
     {
-        $user = UserFactory::createOne();
+        $user = UserFactory::createOne(['password' => 'password']);
 
         $this->browser()
-            ->actingAs($user)
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
             ->post('/api/books', [
                 'json' => [],
             ])
             ->assertStatus(422)
+            ->post('/api/books', [
+                'json' => [
+                    'file' => 'file.pdf',
+                    'image' => 'image.png',
+                    'name' => 'Test name',
+                    'year' => 2023,
+                    'visible' => false,
+                ],
+            ])
+            ->assertStatus(201)
         ;
     }
 

@@ -163,7 +163,6 @@ class Book
     private Collection $userBooksReads;
 
     #[IsValidUser]
-    #[Assert\NotNull]
     #[Groups(['books:read', 'books:write', 'user:read'])]
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?User $user = null;
