@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Exception;
 use ApiPlatform\Api\IriConverterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +27,7 @@ class SecurityController extends AbstractController
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new Exception('This should never be reached!');
+        throw new \Exception('This should never be reached!');
     }
 
     #[Route('/test')]

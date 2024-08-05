@@ -10,7 +10,6 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use App\Validator\BooksAllowedUserChange;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -578,5 +577,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = $plainPassword;
 
         return $this;
+    }
+
+    #[Groups(['user:read'])]
+    #[SerializedName('books')]
+    public function getVisibleBooks(): Collection
+    {
+        return $this->books->filter(static function (Book $book) {
+            return $book->getVisible();
+        });
     }
 }

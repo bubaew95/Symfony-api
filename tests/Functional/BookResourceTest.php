@@ -3,6 +3,7 @@
 namespace App\Tests\Functional;
 
 use App\Entity\ApiToken;
+use App\Entity\Book;
 use App\Factory\ApiTokenFactory;
 use App\Factory\BookFactory;
 use App\Factory\UserFactory;
@@ -16,7 +17,11 @@ class BookResourceTest extends ApiTestCase
 
     public function testGetCollectionOfBooks(): void
     {
-        BookFactory::createMany(5);
+        BookFactory::createMany(5, [
+            'visible' => true,
+        ]);
+
+        BookFactory::createOne(['visible' => false]);
 
         $json = $this->browser()
             ->get('/api/books')
@@ -193,7 +198,7 @@ class BookResourceTest extends ApiTestCase
     {
         $user = UserFactory::createOne(['password' => 'password', 'roles' => ['ROLE_ADMIN']]);
         $book = BookFactory::createOne([
-            'visible' => false,
+            'visible' => true,
             'user' => $user,
         ]);
 
@@ -211,7 +216,7 @@ class BookResourceTest extends ApiTestCase
             ])
             ->assertStatus(200)
             ->assertJsonMatches('year', 1234)
-            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('visible', true)
         ;
     }
 
@@ -219,7 +224,7 @@ class BookResourceTest extends ApiTestCase
     {
         $user = UserFactory::createOne(['password' => 'password']);
         $book = BookFactory::createOne([
-            'visible' => false,
+            'visible' => true,
             'user' => $user,
         ]);
 
@@ -237,7 +242,7 @@ class BookResourceTest extends ApiTestCase
             ])
             ->assertStatus(200)
             ->assertJsonMatches('year', 1234)
-            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('visible', true)
         ;
     }
 
@@ -245,7 +250,7 @@ class BookResourceTest extends ApiTestCase
     {
         $user = UserFactory::createOne(['password' => 'password']);
         $book = BookFactory::createOne([
-            'visible' => false,
+            'visible' => true,
             'user' => $user,
         ]);
 
@@ -263,8 +268,44 @@ class BookResourceTest extends ApiTestCase
             ])
             ->assertStatus(200)
             ->assertJsonMatches('year', 1234)
-            ->assertJsonMatches('visible', false)
+            ->assertJsonMatches('visible', true)
             ->assertJsonMatches('isMine', true)
+        ;
+    }
+
+    public function testGetOneUnpublishedBook404s(): void
+    {
+        $book = BookFactory::createOne([
+            'visible' => false,
+        ]);
+
+        $this->browser()
+            ->get('/api/books/'.$book->getId())
+            ->assertStatus(404);
+    }
+
+    public function testPatchUnVisibleWorks()
+    {
+        $user = UserFactory::createOne(['password' => 'password']);
+        $treasure = BookFactory::createOne([
+            'user' => $user,
+            'visible' => false,
+        ]);
+
+        $this->browser()
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
+            ->patch('/api/books/'.$treasure->getId(), [
+                'json' => [
+                    'year' => 12345,
+                ],
+            ])
+            ->assertStatus(200)
+            ->assertJsonMatches('year', 12345)
         ;
     }
 }

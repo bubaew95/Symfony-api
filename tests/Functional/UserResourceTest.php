@@ -80,4 +80,24 @@ class UserResourceTest extends ApiTestCase
             ->assertStatus(422)
         ;
     }
+
+    public function testUnpublishedBooksNotReturned(): void
+    {
+        $user = UserFactory::createOne(['password' => 'password']);
+        $user2 = UserFactory::createOne(['password' => 'password']);
+        BookFactory::createOne([
+            'visible' => false,
+            'user' => $user,
+        ]);
+
+        $this->browser()
+            ->post('/login', options: [
+                'json' => [
+                    'email' => $user2->getEmail(),
+                    'password' => 'password',
+                ],
+            ])
+            ->get('/api/users/'.$user->getId())
+            ->assertJsonMatches('length("books")', 0);
+    }
 }

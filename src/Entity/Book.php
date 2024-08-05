@@ -106,7 +106,7 @@ class Book
     private ?bool $visible = null;
 
     #[Assert\NotBlank]
-    #[Groups(['books:read', 'books:write', 'category:read', 'category:write'])]
+    #[Groups(['books:read', 'books:write', 'category:read', 'category:write', 'user:read'])]
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
@@ -163,7 +163,7 @@ class Book
     private Collection $userBooksReads;
 
     #[IsValidUser]
-    #[Groups(['books:read', 'books:write', 'user:read'])]
+    #[Groups(['books:read', 'books:write'])]
     #[ORM\ManyToOne(inversedBy: 'books')]
     private ?User $user = null;
 
