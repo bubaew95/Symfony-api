@@ -9,10 +9,11 @@ use ApiPlatform\Metadata\Operation;
 use App\Entity\Book;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class BookIsVisibleExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
-    public function __construct(private Security $security)
+    public function __construct(private readonly Security $security)
     {
     }
 
@@ -34,7 +35,7 @@ class BookIsVisibleExtension implements QueryCollectionExtensionInterface, Query
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $user = $this->security->getUser();
-        if ($user) {
+        if ($user instanceof UserInterface) {
             $queryBuilder
                 ->andWhere(sprintf('%s.visible=:visible OR %s.user=:user', $rootAlias, $rootAlias))
                 ->setParameter('user', $user);

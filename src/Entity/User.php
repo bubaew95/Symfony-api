@@ -583,8 +583,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[SerializedName('books')]
     public function getVisibleBooks(): Collection
     {
-        return $this->books->filter(static function (Book $book) {
-            return $book->getVisible();
-        });
+        return $this->books->filter(static fn (Book $book): ?bool => $book->getVisible());
     }
 }
